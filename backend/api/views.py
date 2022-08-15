@@ -16,7 +16,18 @@ class api_home(APIView):
         instance = Product.objects.get(pk=1)
         print(instance)
         data = {}
-        if(instance):
-    # data = model_to_dict(instance)
+        if (instance):
+            # data = model_to_dict(instance)
             data = ProductSerializer(instance).data
         return Response(data)
+
+    def post(self, request):
+      data = request.data
+      serializer = ProductSerializer(data=request.data)
+      if serializer.is_valid(raise_exception=True):
+        
+        # instance = serializer.save()
+        
+        instance = serializer.data
+        print(instance)
+      return Response(instance) 
