@@ -7,13 +7,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from projects.models import Product
+from projects.serializers import ProductSerializer
 
-@api_view(['GET', 'POST'])
+@api_view(['GET'])
 def api_home(request, *args, **kwargs):
 
-  model_data = Product.objects.get(pk=1)
-  print(model_data)
+  instance = Product.objects.get(pk=1)
+  print(instance)
   data = {}
-  if(model_data):
-    data = model_to_dict(model_data)
+  if(instance):
+    # data = model_to_dict(instance)
+    data = ProductSerializer(instance).data
   return Response(data)
