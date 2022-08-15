@@ -6,7 +6,7 @@ from .serializers import ProductSerializer
 
 # Register your models here.
 class ProductAdmin(admin.ModelAdmin):
-  list_display = ("title", "content","price")
+  list_display = ("id", "title", "content","price")
 
 
 
