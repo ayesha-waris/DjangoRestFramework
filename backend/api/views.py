@@ -4,18 +4,19 @@ from django.http import JsonResponse
 
 
 from rest_framework.decorators import api_view
+from rest_framework.views import APIView
 from rest_framework.response import Response
 
 from projects.models import Product
 from projects.serializers import ProductSerializer
 
-@api_view(['GET'])
-def api_home(request, *args, **kwargs):
 
-  instance = Product.objects.get(pk=1)
-  print(instance)
-  data = {}
-  if(instance):
+class api_home(APIView):
+    def get(self, request):
+        instance = Product.objects.get(pk=1)
+        print(instance)
+        data = {}
+        if(instance):
     # data = model_to_dict(instance)
-    data = ProductSerializer(instance).data
-  return Response(data)
+            data = ProductSerializer(instance).data
+        return Response(data)

@@ -11,7 +11,7 @@ class ProductSerializer(serializers.ModelSerializer):
         'content',
         'price',
         'sale_price',
-        'my_discounnt',
+        'my_discount',
       ]
     def get_my_discount(self,obj):
         return obj.get_discount()
