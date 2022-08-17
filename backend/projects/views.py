@@ -1,24 +1,55 @@
-from rest_framework import authentication, generics, mixins, permissions
+from rest_framework import generics, mixins, permissions
 
-from api.authentication import TokenAuthentication
+
+from api.mixin import StaffEditorPErmissionMixin
 from .models import Product
-from .permissions import IsStaffEditorPermission
 from .serializers import ProductSerializer
 
 
-class ProductListCreateAPIView(generics.ListCreateAPIView):
+class ProductListCreateAPIView(
+        StaffEditorPErmissionMixin,
+        generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-    authentication_classes = [authentication.SessionAuthentication,
-                              TokenAuthentication
-                              ]
-    permission_classes = [permissions.IsAdminUser,
-                          IsStaffEditorPermission]  # ordering matters
 
     def perform_create(self, serializer):
         title = serializer.validated_data
         print(serializer.validated_data)
         serializer.save()
+
+
+class ProductDetailAPIView(
+        StaffEditorPErmissionMixin,
+        generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+
+
+class ProductUpdateAPIView(
+        StaffEditorPErmissionMixin,
+        generics.UpdateAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+
+class ProductDeleteAPIView(
+        StaffEditorPErmissionMixin,
+        generics.DestroyAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductSerializer
+    lookup_field = 'pk'
+
+    def perform_update(self, serializer):
+        instance = serializer.save()
+
+
+# class ProductListAPIView(generics.ListAPIView):
+#     queryset = Product.objects.all()
+#     serializer_class = ProductSerializer
 
 
 class ProductMixinView(
@@ -47,34 +78,3 @@ class ProductMixinView(
         if content is None:
             content = "this is a single view doing cool stuff"
         serializer.save(content=content)
-
-
-class ProductDetailAPIView(generics.RetrieveAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-
-
-
-
-
-class ProductUpdateAPIView(generics.UpdateAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    lookup_field = 'pk'
-
-    def perform_update(self, serializer):
-        instance = serializer.save()
-
-
-class ProductDeleteAPIView(generics.DestroyAPIView):
-    queryset = Product.objects.all()
-    serializer_class = ProductSerializer
-    lookup_field = 'pk'
-
-    def perform_update(self, serializer):
-        instance = serializer.save()
-
-
-# class ProductListAPIView(generics.ListAPIView):
-#     queryset = Product.objects.all()
-#     serializer_class = ProductSerializer
