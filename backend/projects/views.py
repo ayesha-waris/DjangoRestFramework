@@ -1,7 +1,8 @@
-from rest_framework import generics, mixins
+from rest_framework import authentication, generics, mixins, permissions
 
 
 from .models import Product
+from .permissions import IsStaffEditorPermission
 from .serializers import ProductSerializer
 
 
@@ -10,12 +11,12 @@ class ProductMixinView(
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     generics.GenericAPIView
-    ):
+):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'pk'
 
-    def get(self, request, *args, **kwargs): #HTTP -> get
+    def get(self, request, *args, **kwargs):  # HTTP -> get
         pk = kwargs.get("pk")
         if pk is not None:
             return self.retrieve(request, *args, **kwargs)
@@ -23,7 +24,7 @@ class ProductMixinView(
 
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
-    
+
     def perform_create(self, serializer):
         # serializer.save(user=self.request.user)
         title = serializer.validated_data.get('title')
@@ -32,20 +33,22 @@ class ProductMixinView(
             content = "this is a single view doing cool stuff"
         serializer.save(content=content)
 
+
 class ProductDetailAPIView(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
-     
+
 
 class ProductListCreateAPIView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    authentication_classes = [authentication.SessionAuthentication]
+    permission_classes = [IsStaffEditorPermission]
 
     def perform_create(self, serializer):
         title = serializer.validated_data
         print(serializer.validated_data)
         serializer.save()
-
 
 
 class ProductUpdateAPIView(generics.UpdateAPIView):
@@ -55,7 +58,8 @@ class ProductUpdateAPIView(generics.UpdateAPIView):
 
     def perform_update(self, serializer):
         instance = serializer.save()
-        
+
+
 class ProductDeleteAPIView(generics.DestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -68,5 +72,3 @@ class ProductDeleteAPIView(generics.DestroyAPIView):
 # class ProductListAPIView(generics.ListAPIView):
 #     queryset = Product.objects.all()
 #     serializer_class = ProductSerializer
-
-   
