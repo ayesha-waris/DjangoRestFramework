@@ -22,12 +22,12 @@ class api_home(APIView):
         return Response(data)
 
     def post(self, request):
-      data = request.data
-      serializer = ProductSerializer(data=request.data)
-      if serializer.is_valid(raise_exception=True):
-        
-        # instance = serializer.save()
-        
-        instance = serializer.data
-        print(instance)
-      return Response(instance) 
+        data = request.data
+        serializer = ProductSerializer(data=request.data)
+        if serializer.is_valid(raise_exception=True):
+
+            # instance = serializer.save()
+
+            instance = serializer.data
+            print(instance)
+        return Response(instance)
