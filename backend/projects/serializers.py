@@ -13,9 +13,11 @@ class ProductSerializer(serializers.ModelSerializer):
         view_name="product-detail", lookup_field='pk')
     email = serializers.EmailField(write_only=True)
     title = serializers.CharField(validators=[validate_title, unique_product_title])
+    
     class Meta:
         model = Product
         fields = [
+            'user',
             'email',
             'url',
             'edit_url',

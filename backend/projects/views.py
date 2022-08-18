@@ -1,3 +1,4 @@
+from requests import request
 from rest_framework import generics, mixins, permissions
 
 
@@ -16,6 +17,12 @@ class ProductListCreateAPIView(
         title = serializer.validated_data
         print(serializer.validated_data)
         serializer.save()
+
+    def get_queryset(self,*args, **kwargs):
+        qs = super().get_queryset(*args, **kwargs)
+        request = self.request
+        print(request.user)
+        return qs.filter(user=request.user)
 
 
 class ProductDetailAPIView(
