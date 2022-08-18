@@ -2,12 +2,13 @@ from requests import request
 from rest_framework import generics, mixins, permissions
 
 
-from api.mixin import StaffEditorPErmissionMixin
+from api.mixin import StaffEditorPErmissionMixin, UserQuertSetMixin
 from .models import Product
 from .serializers import ProductSerializer
 
 
 class ProductListCreateAPIView(
+        UserQuertSetMixin,
         StaffEditorPErmissionMixin,
         generics.ListCreateAPIView):
     queryset = Product.objects.all()
@@ -16,16 +17,19 @@ class ProductListCreateAPIView(
     def perform_create(self, serializer):
         title = serializer.validated_data
         print(serializer.validated_data)
-        serializer.save()
+        serializer.save(user=self.request.user)
 
-    def get_queryset(self,*args, **kwargs):
-        qs = super().get_queryset(*args, **kwargs)
-        request = self.request
-        print(request.user)
-        return qs.filter(user=request.user)
+    # def get_queryset(self,*args, **kwargs):
+    #     qs = super().get_queryset(*args, **kwargs)
+    #     request = self.request
+    #     user = request.user
+    #     if not user.is_authenticated:
+    #       return Product.objects.none()
+    #     return qs.filter(user=request.user)
 
 
 class ProductDetailAPIView(
+        UserQuertSetMixin,
         StaffEditorPErmissionMixin,
         generics.RetrieveAPIView):
     queryset = Product.objects.all()
@@ -33,6 +37,7 @@ class ProductDetailAPIView(
 
 
 class ProductUpdateAPIView(
+        UserQuertSetMixin,
         StaffEditorPErmissionMixin,
         generics.UpdateAPIView):
     queryset = Product.objects.all()
@@ -44,6 +49,7 @@ class ProductUpdateAPIView(
 
 
 class ProductDeleteAPIView(
+        UserQuertSetMixin,
         StaffEditorPErmissionMixin,
         generics.DestroyAPIView):
     queryset = Product.objects.all()
