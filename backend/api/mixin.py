@@ -1,4 +1,5 @@
 from cgitb import lookup
+from requests import request
 from rest_framework import permissions
 
 from .permissions import IsStaffEditorPermission
@@ -16,4 +17,7 @@ class UserQuertSetMixin():
         lookup_data = {}
         lookup_data[self.user_field] = self.request.user
         qs = super().get_queryset(*args, **kwargs)
+        user = self.request.user
+        # if user.is_staff:
+        #   return qs
         return qs.filter(**lookup_data)
